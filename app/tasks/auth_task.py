@@ -8,6 +8,7 @@ from playwright.async_api import async_playwright
 
 from app.paths import SESSION_DIR
 from app.tasks.manager import TrackedTask
+from src.browser import launch_browser
 
 PLATFORM_LOGIN_URLS = {
     "x": "https://x.com/login",
@@ -82,7 +83,7 @@ async def _verify_session(playwright, platform: str, session_file: Path) -> tupl
 
     browser = None
     try:
-        browser = await playwright.chromium.launch(headless=False)
+        browser = await launch_browser(playwright)
         context = await browser.new_context(storage_state=str(session_file))
         page = await context.new_page()
 
@@ -136,7 +137,7 @@ async def run_auth_flow(task: TrackedTask):
         task.status = "running"
         async with async_playwright() as p:
             # Phase 1: Open browser for login
-            browser = await p.chromium.launch(headless=False)
+            browser = await launch_browser(p)
             context = await browser.new_context()
             page = await context.new_page()
 

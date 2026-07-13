@@ -6,6 +6,8 @@ from pathlib import Path
 
 from playwright.async_api import async_playwright
 
+from src.browser import launch_browser
+
 SESSION_DIR = Path("session")
 SESSION_FILE = SESSION_DIR / "linkedin_state.json"
 
@@ -15,7 +17,7 @@ async def login_and_save_session():
     SESSION_DIR.mkdir(exist_ok=True)
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)
+        browser = await launch_browser(p)
         context = await browser.new_context()
         page = await context.new_page()
 
@@ -50,7 +52,7 @@ async def load_session(playwright, session_file: str | None = None):
             "Run 'python3 -m src.platforms.linkedin.auth' to re-authenticate."
         )
 
-    browser = await playwright.chromium.launch(headless=False)
+    browser = await launch_browser(playwright)
     context = await browser.new_context(storage_state=str(session_path))
     page = await context.new_page()
 

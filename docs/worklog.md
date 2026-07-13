@@ -1,5 +1,27 @@
 # Work Log
 
+## 2026-07-12 - Fix login rejection: shared browser launch without automation signals
+
+Platforms were refusing logins in the automated browser. Playwright's default
+`chromium.launch()` passes `--enable-automation`, which sets
+`navigator.webdriver=true` — the first thing every bot check reads.
+
+- New `src/browser.py` with `launch_browser(playwright, headless=False)`: strips `--enable-automation` via `ignore_default_args`, adds `--disable-blink-features=AutomationControlled`, and prefers the branded Chrome build (`channel="chrome"`) since Google's sign-in treats unbranded Chromium as insecure — falling back to bundled Chromium when no system Chrome exists.
+- Routed all 11 launch sites through it: `app/tasks/auth_task.py` (login flow + `_verify_session`) and `src/platforms/{x,threads,instagram,linkedin,youtube}/auth.py` (`login_and_save_session` + `load_session`). Collectors get it for free — they all obtain their browser from `load_session`.
+- `focus-lab.spec`: added `src.browser`; fixed stale `src.platforms.twitter.*` hiddenimports left over from the twitter→x rename (would have broken the bundled app) and added the missing `src.platforms.linkedin.*` entries.
+
+Verified: side-by-side launch probe — old default reports `navigator.webdriver=True`, `launch_browser` reports `False`; Chrome-channel fallback to bundled Chromium exercised (no system Chrome on this box).
+
+Found-but-not-fixed: `tests/` is stale from the multi-platform refactor — all 6 modules fail at collection importing `src.scroller` / `save_tweets`, which no longer exist. Pre-existing on a clean tree; separate cleanup.
+
+## 2026-07-12 - Dev environment setup on Linux (Steam Deck)
+
+- Created `.venv` (Python 3.13.5, system pip absent on SteamOS) and installed `requirements.txt` + `requirements-app.txt`.
+- Launched the app with `.venv/bin/python -m app.main --no-gui` — server mode on port 8741; pywebview native window untested on this machine.
+- Installed Chromium through the app's own `POST /api/setup/install` endpoint (lands in `~/.cache/focus-lab-feed-collector/playwright/chromium-1228/`).
+- Note: that install provides the full headed Chromium only, not Playwright's `chrome-headless-shell` — headless Playwright scripts on this box need `executable_path=.../chrome-linux64/chrome`.
+- Verified: `/` serves the UI, `/api/config` and `/api/setup/status` respond, onboarding welcome screen renders in Chromium (screenshot checked). No code changes.
+
 ## 2026-05-02 - Rename twitter → x
 
 Twitter has been "X" for years; the codebase finally catches up.
