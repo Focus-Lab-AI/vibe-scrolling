@@ -1,0 +1,42 @@
+{
+  "contents": {
+    "twoColumnBrowseResultsRenderer": {
+      "tabs": [
+        {
+          "tabRenderer": {
+            "content": {
+              "richGridRenderer": {
+                "contents": [
+                  {
+                    "richItemRenderer": {
+                      "content": {
+                        "lockupViewModel": {
+                          "contentId": "vidInit0001",
+                          "metadata": {
+                            "lockupMetadataViewModel": {
+                              "title": {"content": "Initial page video"},
+                              "metadata": {"contentMetadataViewModel": {"metadataRows": [{"metadataParts": [{"text": {"content": "Some Channel"}}]}]}}
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "richItemRenderer": {
+                      "content": {
+                        "adSlotRenderer": {
+                          "fulfillmentContent": {"fulfilledLayout": {"inFeedAdLayoutRenderer": {"renderingContent": {"title": {"runs": [{"text": "Ad "}, {"text": "title"}]}}}}}
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

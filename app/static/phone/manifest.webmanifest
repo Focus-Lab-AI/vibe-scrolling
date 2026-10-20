@@ -1,0 +1,14 @@
+{
+  "name": "Focus Lab Live",
+  "short_name": "Focus Lab",
+  "description": "Your agent-curated feed, streamed live from your host.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1419",
+  "theme_color": "#0f1419",
+  "icons": [
+    { "src": "../focuslab-logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

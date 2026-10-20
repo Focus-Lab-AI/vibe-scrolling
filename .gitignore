@@ -13,3 +13,8 @@ scripts/ralph/.last-branch
 /exports/
 /goals.md
 /AGENTS.md
+
+# streaming host
+/profiles/
+/streams/
+tests/stream/artifacts/*.png

@@ -42,7 +42,8 @@ function timeAgo(s) {
     const d = new Date(s);
     if (isNaN(d.getTime())) return s;
     const diff = (Date.now() - d) / 1000;
-    if (diff < 60)    return `${Math.floor(diff)}s`;
+    if (diff < 0)     return 'now';  // host/platform clock skew
+    if (diff < 60)   return `${Math.floor(diff)}s`;
     if (diff < 3600)  return `${Math.floor(diff/60)}m`;
     if (diff < 86400) return `${Math.floor(diff/3600)}h`;
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });

@@ -1,0 +1,82 @@
+{
+  "data": {"data": {"feedDashMainFeedByMainFeed": {"*elements": ["urn:li:fsd_update:(urn:li:activity:7001,MAIN_FEED,EMPTY,DEFAULT,false)"]}}},
+  "included": [
+    {
+      "$type": "com.linkedin.voyager.dash.feed.Update",
+      "entityUrn": "urn:li:fsd_update:(urn:li:activity:7001,MAIN_FEED,EMPTY,DEFAULT,false)",
+      "actor": {
+        "name": {"text": "Priya P"},
+        "description": {"text": "Engineer at Somewhere"},
+        "subDescription": {"text": "2h • "},
+        "navigationContext": {"actionTarget": "https://www.linkedin.com/in/priya-p?miniProfileUrn=x"}
+      },
+      "commentary": {"text": {"text": "Shipped a thing today."}},
+      "*socialDetail": "urn:li:fsd_socialDetail:7001",
+      "content": {
+        "imageComponent": {
+          "images": [
+            {"attributes": [{"detailData": {"vectorImage": {"rootUrl": "https://media.licdn.com/img/", "artifacts": [
+              {"width": 100, "height": 100, "fileIdentifyingUrlPathSegment": "small.jpg"},
+              {"width": 1200, "height": 800, "fileIdentifyingUrlPathSegment": "large.jpg"}
+            ]}}}]}
+          ]
+        }
+      }
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.social.SocialDetail",
+      "entityUrn": "urn:li:fsd_socialDetail:7001",
+      "*totalSocialActivityCounts": "urn:li:fsd_socialActivityCounts:7001"
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.feed.SocialActivityCounts",
+      "entityUrn": "urn:li:fsd_socialActivityCounts:7001",
+      "numLikes": 42,
+      "numComments": 6,
+      "numShares": 2
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.feed.Update",
+      "entityUrn": "urn:li:fsd_update:(urn:li:activity:7002,MAIN_FEED,EMPTY,DEFAULT,false)",
+      "header": {"text": {"text": "Promoted"}},
+      "actor": {
+        "name": {"text": "Acme Corp"},
+        "navigationContext": {"actionTarget": "https://www.linkedin.com/company/acme/"}
+      },
+      "commentary": {"text": "Hire faster with Acme"},
+      "content": {
+        "linkedInVideoComponent": {"*videoPlayMetadata": "urn:li:digitalmediaAsset:VID1"}
+      }
+    },
+    {
+      "$type": "com.linkedin.videocontent.VideoPlayMetadata",
+      "entityUrn": "urn:li:digitalmediaAsset:VID1",
+      "progressiveStreams": [
+        {"width": 640, "height": 360, "streamingLocations": [{"url": "https://dms.licdn.com/360.mp4"}]},
+        {"width": 1280, "height": 720, "streamingLocations": [{"url": "https://dms.licdn.com/720.mp4"}]}
+      ],
+      "thumbnail": {"rootUrl": "https://media.licdn.com/thumb/", "artifacts": [{"width": 640, "height": 360, "fileIdentifyingUrlPathSegment": "t.jpg"}]}
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.feed.Update",
+      "entityUrn": "urn:li:fsd_update:(urn:li:activity:7003,MAIN_FEED,EMPTY,DEFAULT,false)",
+      "actor": {
+        "name": {"text": "Quinn Q"},
+        "navigationContext": {"actionTarget": "https://www.linkedin.com/in/quinnq/"}
+      },
+      "commentary": {"text": "Worth reading"},
+      "*resharedUpdate": "urn:li:fsd_update:(urn:li:activity:6999,MAIN_FEED,EMPTY,DEFAULT,false)"
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.feed.Update",
+      "entityUrn": "urn:li:fsd_update:(urn:li:activity:6999,MAIN_FEED,EMPTY,DEFAULT,false)",
+      "actor": {"name": {"text": "Rae R"}},
+      "commentary": {"text": "Original article post"}
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.feed.Update",
+      "entityUrn": "urn:li:fsd_update:(urn:li:aggregate:1,MAIN_FEED)"
+    },
+    {"$type": "com.linkedin.voyager.dash.identity.profile.Profile", "entityUrn": "urn:li:fsd_profile:abc"}
+  ]
+}

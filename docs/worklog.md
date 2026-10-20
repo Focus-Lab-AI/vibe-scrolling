@@ -282,3 +282,12 @@ Verified end-to-end on a real job: workspace at `~/Documents/vibe-scrolling-data
 - Created `tests/test_run_summary.py` with 11 tests: file creation, appending, location, field preservation, pretty-print, warnings, empty warnings, printed output, warning display, no-warnings omission, header
 - All 76 tests pass (12 parser + 9 dedup + 20 scroller + 12 storage + 12 media + 11 summary)
 - Files changed: src/storage.py, src/collector.py, tests/test_run_summary.py, prd.json, docs/status.md, docs/worklog.md
+
+## 2026-10-20 - Streaming host M1 spine + curator + adapters + phone PWA
+- Plan: docs/streaming-plan.md; contracts: src/stream/contracts.py
+- src/stream: persistent BrowserPool (Xvfb on Linux), pull-driven FeedProducer, StreamHub (prefilter → micro-batch curation → ready buffer → WS fan-out), events.jsonl log + posts.filtered.json writer
+- Curators: heuristic, Claude Haiku 4.5 micro-batch (streamed verdicts, cached prompt, heuristic fallback), offline skill CLI; goals.md drop threshold implemented
+- Adapters for x/threads/instagram/youtube/linkedin wrapping existing parsers (per-response parse, on-demand fetch_comments) + fake platform for tests
+- /ws/stream + /phone PWA (live feed, curated comment sheet, live-view placeholder); scripts/run_stream_host.py, scripts/mock_stream_server.py
+- tests/stream: 97 passed; integration smoke (real host + phone on fake platform) OK
+- Next: M2 live validation on real accounts, M3 Claude curator against real API, M4 live view (CDP screencast) + login on phone, media proxy

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Focus Lab">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1419" media="(prefers-color-scheme: dark)">
+<title>Focus Lab Live</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="../focuslab-logo.svg">
+<link rel="apple-touch-icon" href="../focuslab-logo.svg">
+<link rel="stylesheet" href="phone.css">
+</head>
+<body>
+
+<header class="topbar" id="topbar">
+  <div class="topbar-row">
+    <img class="logo" src="../focuslab-logo.svg" alt="" width="26" height="26">
+    <div class="brand">
+      <div class="brand-name">Focus Lab</div>
+      <div class="brand-meta" id="feed-meta">Connecting…</div>
+    </div>
+    <span class="conn" id="conn" data-state="connecting" title="Connection"><i></i><span id="conn-label">connecting</span></span>
+  </div>
+  <div class="chips" id="chips" aria-label="Platform status"></div>
+</header>
+
+<div class="login-banner" id="login-banner" hidden></div>
+
+<main id="feed" class="feed" aria-live="polite"></main>
+
+<div class="tail" id="tail">
+  <div class="skeleton"><div class="sk-line w40"></div><div class="sk-line w90"></div><div class="sk-line w70"></div><div class="sk-media"></div></div>
+  <div class="skeleton"><div class="sk-line w30"></div><div class="sk-line w80"></div><div class="sk-line w60"></div></div>
+  <div class="tail-label" id="tail-label">Your agent is curating…</div>
+</div>
+
+<!-- Comments bottom sheet -->
+<div class="sheet-backdrop" id="sheet-backdrop" hidden></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+  <div class="sheet-head" id="sheet-head">
+    <div class="sheet-grip"></div>
+    <div class="sheet-title-row">
+      <h2 id="sheet-title">Comments</h2>
+      <button class="icon-btn" id="sheet-close" aria-label="Close comments">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="sheet-body" id="sheet-body"></div>
+</section>
+
+<!-- Live view (login / takeover) -->
+<section class="live" id="live" hidden>
+  <div class="live-bar">
+    <div class="live-title"><span class="live-dot"></span><span id="live-title">Live view</span></div>
+    <button class="pill-btn" id="live-close">Done</button>
+  </div>
+  <div class="live-stage" id="live-stage">
+    <canvas id="live-canvas" width="390" height="844"></canvas>
+    <div class="live-msg" id="live-msg"></div>
+  </div>
+  <div class="live-hint">Tap to click · swipe to scroll · this is the real browser on your host</div>
+</section>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="../js/post-renderer.js"></script>
+<script src="phone.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{
+  "data": {
+    "xdt_api__v1__feed__timeline__connection": {
+      "edges": [
+        {
+          "node": {
+            "media": {
+              "pk": "4101",
+              "code": "IGa",
+              "taken_at": 1760868000,
+              "user": {"username": "kai", "full_name": "Kai K"},
+              "caption": {"text": "Sunset"},
+              "like_count": 120,
+              "comment_count": 8,
+              "image_versions2": {"candidates": [{"url": "https://cdn.ig/s.jpg", "width": 150, "height": 150}, {"url": "https://cdn.ig/l.jpg", "width": 1080, "height": 1350}]}
+            }
+          }
+        },
+        {
+          "node": {
+            "ad": {"ad_id": "x"},
+            "media": {
+              "pk": "4102",
+              "code": "IGb",
+              "user": {"username": "shop", "full_name": "Shop"},
+              "caption": {"text": "Sale!"},
+              "ad_id": "123",
+              "video_versions": [{"url": "https://cdn.ig/ad.mp4", "width": 720, "height": 1280}]
+            }
+          }
+        },
+        {
+          "node": {
+            "explore_story": {
+              "media": {
+                "pk": "4103",
+                "code": "IGc",
+                "owner": {"username": "lea", "full_name": "Lea L"},
+                "user": null,
+                "caption": null,
+                "carousel_media": [
+                  {"image_versions2": {"candidates": [{"url": "https://cdn.ig/c1.jpg", "width": 1, "height": 1}]}},
+                  {"image_versions2": {"candidates": [{"url": "https://cdn.ig/c2.jpg", "width": 1, "height": 1}]}}
+                ]
+              }
+            }
+          }
+        },
+        {"node": {"media": {"pk": "4104"}}},
+        {"node": {"end_of_feed_demarcator": {}}}
+      ]
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "data": {
+    "threaded_conversation_with_injections_v2": {
+      "instructions": [
+        {
+          "type": "TimelineAddEntries",
+          "entries": [
+            {
+              "entryId": "tweet-1001",
+              "content": {
+                "itemContent": {
+                  "itemType": "TimelineTweet",
+                  "tweet_results": {"result": {"rest_id": "1001", "legacy": {"full_text": "focal tweet"}}}
+                }
+              }
+            },
+            {
+              "entryId": "conversationthread-2001",
+              "content": {
+                "items": [
+                  {
+                    "item": {
+                      "itemContent": {
+                        "itemType": "TimelineTweet",
+                        "tweet_results": {
+                          "result": {
+                            "__typename": "Tweet",
+                            "rest_id": "2001",
+                            "core": {"user_results": {"result": {"core": {"screen_name": "rhea", "name": "Rhea R"}}}},
+                            "legacy": {"full_text": "@alice great point", "created_at": "Mon Oct 19 11:00:00 +0000 2026", "favorite_count": 7, "retweet_count": 1, "reply_count": 2}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "item": {
+                      "itemContent": {
+                        "itemType": "TimelineTweet",
+                        "tweet_results": {
+                          "result": {
+                            "__typename": "TweetWithVisibilityResults",
+                            "tweet": {
+                              "rest_id": "2002",
+                              "core": {"user_results": {"result": {"legacy": {"screen_name": "sam", "name": "Sam S"}}}},
+                              "note_tweet": {"note_tweet_results": {"result": {"text": "A long-form reply that was truncated in legacy.full_text but is complete here."}}},
+                              "legacy": {"full_text": "A long-form reply that was truncated…", "created_at": "Mon Oct 19 11:01:00 +0000 2026", "favorite_count": 3}
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "entryId": "conversationthread-2003",
+              "content": {
+                "items": [
+                  {
+                    "item": {
+                      "itemContent": {
+                        "itemType": "TimelineTweet",
+                        "tweet_results": {
+                          "result": {
+                            "__typename": "Tweet",
+                            "rest_id": "1001",
+                            "core": {"user_results": {"result": {"core": {"screen_name": "alice", "name": "Alice A"}}}},
+                            "legacy": {"full_text": "focal again (must be skipped)"}
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "item": {
+                      "itemContent": {
+                        "itemType": "TimelineTweet",
+                        "tweet_results": {
+                          "result": {
+                            "__typename": "Tweet",
+                            "rest_id": "2003",
+                            "core": {"user_results": {"result": {"core": {"screen_name": "tom", "name": "Tom T"}}}},
+                            "legacy": {"full_text": "third reply", "created_at": "Mon Oct 19 11:02:00 +0000 2026", "favorite_count": 0}
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {"entryId": "cursor-bottom-xyz", "content": {"value": "c"}}
+          ]
+        }
+      ]
+    }
+  }
+}

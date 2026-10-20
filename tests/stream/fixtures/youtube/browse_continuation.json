@@ -1,0 +1,93 @@
+{
+  "onResponseReceivedActions": [
+    {
+      "appendContinuationItemsAction": {
+        "continuationItems": [
+          {
+            "richItemRenderer": {
+              "content": {
+                "lockupViewModel": {
+                  "contentId": "vid00000001",
+                  "contentImage": {
+                    "collectionThumbnailViewModel": {
+                      "primaryThumbnail": {
+                        "thumbnailViewModel": {
+                          "image": {"sources": [{"url": "https://i.ytimg.com/vi/vid00000001/small.jpg", "width": 168}, {"url": "https://i.ytimg.com/vi/vid00000001/hq.jpg", "width": 720}]},
+                          "overlays": [{"thumbnailOverlayBadgeViewModel": {"thumbnailBadges": [{"thumbnailBadgeViewModel": {"text": "12:34"}}]}}]
+                        }
+                      }
+                    }
+                  },
+                  "metadata": {
+                    "lockupMetadataViewModel": {
+                      "title": {"content": "How to focus deeply"},
+                      "metadata": {
+                        "contentMetadataViewModel": {
+                          "metadataRows": [
+                            {"metadataParts": [{"text": {"content": "Deep Work Channel"}}]},
+                            {"metadataParts": [{"text": {"content": "1.2M views"}}, {"text": {"content": "3 days ago"}}]}
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "richItemRenderer": {
+              "content": {
+                "adSlotRenderer": {
+                  "adSlotMetadata": {"slotId": "0:1760868000:0:42", "slotType": "SLOT_TYPE_IN_FEED"},
+                  "fulfillmentContent": {
+                    "fulfilledLayout": {
+                      "inFeedAdLayoutRenderer": {
+                        "renderingContent": {
+                          "feedAdMetadataViewModel": {"headline": {"content": "Try our productivity app"}}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "richSectionRenderer": {
+              "content": {
+                "richShelfRenderer": {
+                  "title": {"runs": [{"text": "Shorts"}]},
+                  "contents": [
+                    {
+                      "richItemRenderer": {
+                        "content": {
+                          "shortsLockupViewModel": {
+                            "onTap": {"innertubeCommand": {"reelWatchEndpoint": {"videoId": "short000001"}}},
+                            "accessibilityText": "Tiny habit, 5K views - play Short",
+                            "overlayMetadata": {"secondaryText": {"content": "5K views"}}
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "richItemRenderer": {
+                        "content": {
+                          "shortsLockupViewModel": {
+                            "inlinePlayerData": {"onVisible": {"innertubeCommand": {"watchEndpoint": {"videoId": "short000002"}}}},
+                            "accessibilityText": "Second short"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {"continuationItemRenderer": {"continuationEndpoint": {}}}
+        ]
+      }
+    }
+  ]
+}

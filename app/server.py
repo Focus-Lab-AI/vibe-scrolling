@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from app.api import auth, collection, config, curated, data, setup, workspace
+from app.api import auth, collection, config, curated, data, setup, stream, workspace
 from app.paths import FEED_DATA_DIR, IS_BUNDLED, STATIC_DIR, get_collected_data_dir
 from src.storage import migrate_legacy_runs
 
@@ -49,6 +49,8 @@ def create_app() -> FastAPI:
     app.include_router(setup.router, prefix="/api/setup", tags=["setup"])
     app.include_router(workspace.router, prefix="/api/workspace", tags=["workspace"])
     app.include_router(curated.router, prefix="/api/curated", tags=["curated"])
+    # Streaming host: WS /ws/stream + /api/stream/* (paths are absolute in the router)
+    app.include_router(stream.router, tags=["stream"])
 
     # Serve collected data (media files, JSON). Resolved per-request because
     # the active data dir flips when the user picks a workspace at runtime —
@@ -56,6 +58,13 @@ def create_app() -> FastAPI:
     @app.get("/feed_data/{path:path}")
     async def serve_data(path: str):
         return _serve_under(get_collected_data_dir(), path)
+
+    # Phone PWA for the streaming host (before the SPA catch-all)
+    app.mount(
+        "/phone",
+        StaticFiles(directory=str(STATIC_DIR / "phone"), html=True, check_dir=False),
+        name="phone",
+    )
 
     # Serve frontend SPA (must be last — catches all remaining paths)
     app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
