@@ -5,7 +5,7 @@ Branch: `feature/streaming-host` (worktree `vibe-scrolling-stream`), based on `m
 ## Goal
 
 Replace the async batch loop (collect → agent curates → repackage → phone) with a
-live pipeline. A **host** (Linux box with Xvfb now, Mac mini later) keeps logged-in
+live pipeline. A **host** (Linux box with Xvfb, or a laptop via `scripts/run_laptop.sh`; Mac mini later) keeps logged-in
 browsers alive. A **phone** connects; everything it sees is curated in-line by an
 agent; interactions (open comments, load more, take over) run on the real hosted
 browser and stream back.

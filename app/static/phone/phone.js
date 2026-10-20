@@ -87,6 +87,7 @@ const state = {
     posts: new Map(),           // post id → post.curated event
     platforms: new Map(),       // platform → PlatformStatus-ish
     statusMeta: {},
+    host: { mode: 'server', loginHint: '' },
     pending: new Map(),         // request_id → {kind, post_id, platform, sent}
     threads: new Map(),         // post_id → thread.curated event (cache)
     sheet: { requestId: null, postId: null, timer: null },
@@ -198,6 +199,7 @@ function handleMessage(m) {
 
 function onSession(m) {
     state.sessionId = m.session_id || state.sessionId;
+    if (m.host) state.host = { mode: m.host.mode || 'server', loginHint: m.host.login_hint || '' };
     for (const p of (m.platforms || [])) {
         if (typeof p === 'string') { upsertPlatform({ platform: p, state: 'ready' }); continue; }
         upsertPlatform({ platform: p.platform || p.name, state: p.status || p.state, detail: p.detail });
@@ -433,6 +435,16 @@ function renderPlatforms() {
     if (needLogin.length) {
         const names = needLogin.map(displayName);
         const who = names.length === 1 ? names[0] : names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1];
+        if (state.host.mode === 'laptop') {
+            // The feed browser is a visible window on the laptop: log in there,
+            // the host notices within a few seconds and starts scrolling.
+            const hint = state.host.loginHint || 'Log in in the browser window on your laptop.';
+            banner.innerHTML =
+                `<div class="login-txt"><b>${esc(who)}</b> ${names.length === 1 ? 'needs' : 'need'} you to log in. ${esc(hint)}</div>`;
+            banner.hidden = false;
+            renderMeta();
+            return;
+        }
         banner.innerHTML =
             `<div class="login-txt"><b>${esc(who)}</b> ${names.length === 1 ? 'needs' : 'need'} you to log in on the host.</div>` +
             `<div class="login-btns">${needLogin.map(n =>

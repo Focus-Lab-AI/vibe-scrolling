@@ -107,6 +107,22 @@ An unsigned `.app` opens fine but triggers macOS's "unidentified developer" warn
 
 ---
 
+## Run on your laptop, scroll on your phone
+
+The streaming host keeps logged-in browsers on your laptop, curates the feed as it scrolls, and streams it to a page on your phone. Laptop and phone must be on the same Wi-Fi.
+
+1. **Get the code** (Python 3.11+ required; [uv](https://docs.astral.sh/uv/) is used if installed):
+   `git clone -b feature/laptop-host https://github.com/Focus-Lab-AI/vibe-scrolling.git && cd vibe-scrolling`
+2. **Start the host** — first run creates `.venv`, installs dependencies and Chromium:
+   `bash scripts/run_laptop.sh --platforms x,threads` (or `bash scripts/run_laptop.sh --fake` for a no-login demo)
+3. **Allow the firewall prompt** — macOS asks once whether Python may "accept incoming connections". Click **Allow**, or the phone can't connect. (Missed it? System Settings → Network → Firewall → Options → allow `python3`.)
+4. **Scan the QR code** printed in the terminal with your phone camera. It opens `http://<laptop-ip>:8765/phone/?token=…`; add it to the home screen if you like.
+5. **Log in on the laptop** if the phone says a platform needs it: sign in in the Chrome window that opened on the laptop. The host notices within ~3 s and the feed starts streaming. Logins persist in `<workspace>/profiles/`.
+
+`Ctrl+C` stops the host. On macOS the script wraps the host in `caffeinate -i` so the laptop stays awake (`--no-caffeinate` to skip). Other flags: `--headless`, `--port`, `--token`, `--curator claude` (needs `ANTHROPIC_API_KEY`), `--workspace DIR`; see `bash scripts/run_laptop.sh --help`.
+
+---
+
 ## Project layout
 
 ```

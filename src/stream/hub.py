@@ -53,6 +53,8 @@ class HubConfig:
     default_buffer_target: int = 20
     text_dedupe_min_chars: int = 20
     comments_limit: int = 50
+    host_mode: str = "server"  # "laptop": the feed browsers are visible windows on the host
+    login_hint: str = ""
     producer: ProducerConfig = field(default_factory=ProducerConfig)
     producer_overrides: dict[str, ProducerConfig] = field(default_factory=dict)
 
@@ -176,8 +178,10 @@ class StreamHub:
                     config=cfg, on_status=self._on_producer_status,
                 )
                 self.producers[name] = prod
-            if not prod.running:
+            if not prod.running:  # first hello, or stopped / errored / session cap
                 prod.start()
+            elif prod.needs_login:  # a phone just (re)connected: check again now
+                prod.recheck_login()
             started.append(name)
         return started
 
@@ -303,6 +307,7 @@ class StreamHub:
                 {"platform": s.platform, "status": public_state(s.state), "state": s.state, "detail": s.detail}
                 for s in self.platform_statuses()
             ],
+            "host": {"mode": self.config.host_mode, "login_hint": self.config.login_hint},
             "ts": time.time(),
         }
 

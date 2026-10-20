@@ -1,5 +1,19 @@
 # Work Log
 
+## 2026-10-20 - Laptop host: run on the MacBook, scroll on the phone
+
+Branch `feature/laptop-host` (off `feature/streaming-host`).
+
+- New `scripts/run_laptop.sh` (macOS + Linux, bash 3.2-safe): creates `.venv` (Python 3.11+, `uv` when present), installs `requirements.txt` + `requirements-app.txt` + `anthropic` (skipped on re-runs unless requirements change), runs `playwright install chromium` into the same `PLAYWRIGHT_BROWSERS_PATH` the host uses, then starts the host on `0.0.0.0` with a random pairing token, `--laptop --qr`, wrapped in `caffeinate -i` on macOS. Flags: `--platforms`, `--fake`, `--headless`, `--port`, `--token`, `--curator`, `--workspace`, `--no-caffeinate`, `--setup-only`.
+- `scripts/run_stream_host.py`: `--platforms x,threads` (env `VS_STREAM_PLATFORMS`, beats config.json), `--workspace`, `--curator`, `--laptop` (env `VS_STREAM_HOST_MODE=laptop`), `--qr` (terminal QR via `qrcode`). LAN IP on macOS from `ipconfig getifaddr en0`/`en1`. URL + QR are printed after uvicorn is listening.
+- Login on a laptop: producer polls `is_logged_in` every 3 s (was 15 s) while `needs_login`, re-navigates to the feed once logged in; `needs_login` detail is the laptop hint ("Log in in the browser window on your laptop…"). `session` messages carry `host: {mode, login_hint}`; the phone banner shows the hint instead of the (not yet implemented) live-view login button.
+- `hello` now rechecks a `needs_login` producer immediately (`FeedProducer.recheck_login()`) and restarts one that is stopped/errored/past its session cap.
+- Browser profiles default to `<workspace>/profiles` (config `stream.profiles_dir` relative paths resolve against the workspace; falls back to DATA_DIR without one). Chrome channel preference unchanged. Xvfb path is Linux-only already.
+- Deps: `websockets` (uvicorn needs it to serve `/ws/stream`; it was missing from every requirements file) and `qrcode` added to `requirements-app.txt`.
+- Removed an accidentally committed `.venv` symlink (`.venv -> ../vibe-scrolling/.venv`, a worktree artefact) that broke venv creation in fresh clones; `run_laptop.sh` also removes a dangling `.venv` symlink.
+- Tests: `tests/stream/test_laptop_host.py` — needs_login → ready after logging in in the window, hello rechecks needs_login (60 s poll, unblocks in <1 s) and restarts a stopped producer over the WS, laptop config wiring, `--platforms` parsing.
+- Verified on Linux: `bash scripts/run_laptop.sh --fake --headless` → QR + URL printed, `/phone/` 200, WS hello receives `session` (host mode laptop) and curated posts, profiles land in the workspace. Not verified: running on macOS itself (firewall prompt, caffeinate, Chrome channel, `ipconfig getifaddr`).
+
 ## 2026-07-12 - Fix login rejection: shared browser launch without automation signals
 
 Platforms were refusing logins in the automated browser. Playwright's default

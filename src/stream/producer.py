@@ -61,8 +61,9 @@ class ProducerConfig:
     scroll_delay_max: float = 5.0
     stale_after_steps: int = 12  # scroll steps with no new post → reload once
     session_cap_minutes: float = 30.0
-    login_recheck_seconds: float = 15.0
+    login_recheck_seconds: float = 3.0
     navigation_timeout_ms: int = 30000
+    login_hint: str = "log in via live view or the desktop app"
 
 
 class FeedProducer:
@@ -90,6 +91,7 @@ class FeedProducer:
         self._paused = False
         self._resume = asyncio.Event()
         self._resume.set()
+        self._login_kick = asyncio.Event()
         self._task: Optional[asyncio.Task] = None
         self._pending: set[asyncio.Task] = set()
         self._last_new_at_step = 0
@@ -102,6 +104,10 @@ class FeedProducer:
             self._stopping = False
             self._task = asyncio.create_task(self._run(), name=f"producer:{self.platform}")
         return self._task
+
+    def recheck_login(self) -> None:
+        """Re-run the login check now instead of at the next poll."""
+        self._login_kick.set()
 
     def pause(self) -> None:
         self._paused = True
@@ -133,6 +139,10 @@ class FeedProducer:
     @property
     def running(self) -> bool:
         return self._task is not None and not self._task.done()
+
+    @property
+    def needs_login(self) -> bool:
+        return self.running and self.status.state == "needs_login"
 
     def _set_state(self, state: str, detail: str = "") -> None:
         if self.status.state == state and self.status.detail == detail:
@@ -246,20 +256,26 @@ class FeedProducer:
         )
 
     async def _wait_logged_in(self) -> bool:
+        """Poll `is_logged_in` every `login_recheck_seconds` (or right away on
+        `recheck_login()`) until the user has logged in in the browser window.
+        After a manual login the page may be anywhere, so go back to the feed."""
         assert self.page is not None
+        waited = False
         while not self._stopping:
             try:
-                if await self.adapter.is_logged_in(self.page):
-                    return True
-            except Exception as e:  # noqa: BLE001
+                ok = await self.adapter.is_logged_in(self.page)
+            except Exception as e:  # noqa: BLE001 — page mid-navigation etc.
                 print(f"[stream] {self.platform}: login check failed: {e}")
-            self._set_state("needs_login", "log in via live view or the desktop app")
-            await asyncio.sleep(self.config.login_recheck_seconds)
-            # After a manual login the user may still be on the login page.
-            try:
-                if await self.adapter.is_logged_in(self.page):
+                ok = False
+            if ok:
+                if waited:
                     await self._navigate()
-                    return True
-            except Exception:
+                return True
+            waited = True
+            self._set_state("needs_login", self.config.login_hint)
+            self._login_kick.clear()
+            try:
+                await asyncio.wait_for(self._login_kick.wait(), self.config.login_recheck_seconds)
+            except asyncio.TimeoutError:
                 pass
         return False

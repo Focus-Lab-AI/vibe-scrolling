@@ -10,8 +10,13 @@ Config (config.json → "stream", all optional):
      "curator": "heuristic",           # make_curator kind
      "low_watermark": 8, "high_watermark": 20,
      "batch_window": 1.5, "session_cap_minutes": 30,
-     "profiles_dir": "<DATA_DIR>/profiles"}
-Env VS_STREAM_FAKE_URL=<url> enables the local fake platform for dev.
+     "profiles_dir": "<workspace>/profiles"}   # relative → under the workspace
+Env (set by scripts/run_stream_host.py flags; env wins over config.json):
+    VS_STREAM_FAKE_URL=<url>     enable the local fake platform for dev
+    VS_STREAM_PLATFORMS=x,threads real platforms to stream
+    VS_STREAM_WORKSPACE=<dir>    workspace for profiles/streams/goals.md
+    VS_STREAM_HOST_MODE=laptop   feed browsers are visible windows on this machine
+    VS_STREAM_CURATOR=claude     curator kind (overrides stream.curator)
 """
 
 from __future__ import annotations
@@ -67,16 +72,36 @@ def stream_token() -> Optional[str]:
     )
 
 
+LAPTOP_LOGIN_HINT = "Log in in the browser window on your laptop — scrolling starts automatically."
+
+
+def host_mode() -> str:
+    return (os.environ.get("VS_STREAM_HOST_MODE") or stream_config().get("host_mode") or "server").lower()
+
+
+def stream_workspace() -> Optional[Path]:
+    """Workspace the host works in: VS_STREAM_WORKSPACE, else config.json's."""
+    env = os.environ.get("VS_STREAM_WORKSPACE")
+    if env:
+        p = Path(env).expanduser().resolve()
+        p.mkdir(parents=True, exist_ok=True)
+        return p
+    return get_workspace_dir()
+
+
 def configured_platforms() -> list[str]:
-    names = [p for p in (stream_config().get("platforms") or []) if p != "fake"]
+    env = os.environ.get("VS_STREAM_PLATFORMS")
+    raw = env.split(",") if env is not None else (stream_config().get("platforms") or [])
+    names = [p.strip().lower() for p in raw if p.strip() and p.strip().lower() != "fake"]
+    names = ["x" if p == "twitter" else p for p in names]
     if os.environ.get("VS_STREAM_FAKE_URL"):
         names.append("fake")
     return names
 
 
-def _resolve(p: str | Path) -> Path:
+def _resolve(p: str | Path, base: Optional[Path] = None) -> Path:
     p = Path(p).expanduser()
-    return p if p.is_absolute() else DATA_DIR / p
+    return p if p.is_absolute() else (base or DATA_DIR) / p
 
 
 def build_hub_from_config():
@@ -97,7 +122,11 @@ def build_hub_from_config():
         if adapter is not None:
             adapters[name] = adapter
 
-    base = ProducerConfig(session_cap_minutes=float(scfg.get("session_cap_minutes", 30)))
+    mode = host_mode()
+    login_hint = LAPTOP_LOGIN_HINT if mode == "laptop" else ProducerConfig.login_hint
+    base = ProducerConfig(
+        session_cap_minutes=float(scfg.get("session_cap_minutes", 30)), login_hint=login_hint,
+    )
     overrides = {}
     for name in adapters:
         pc = platform_cfg.get(name) or {}
@@ -108,6 +137,7 @@ def build_hub_from_config():
         overrides[name] = ProducerConfig(
             scroll_delay_min=lo, scroll_delay_max=max(lo, hi),
             session_cap_minutes=base.session_cap_minutes,
+            login_hint=login_hint,
         )
 
     session_files = {
@@ -115,22 +145,27 @@ def build_hub_from_config():
         for name, pc in platform_cfg.items()
         if isinstance(pc, dict) and pc.get("session_file")
     }
+    workspace = stream_workspace()
     headless_env = os.environ.get("VS_STREAM_HEADLESS")
     headless = headless_env not in (None, "", "0", "false") if headless_env is not None else bool(scfg.get("headless", False))
+    # Persistent browser profiles hold live logins: keep them in the user's
+    # workspace (outside the repo), falling back to DATA_DIR without one.
+    profiles_dir = _resolve(scfg.get("profiles_dir") or "profiles", workspace)
     pool = BrowserPool(
-        profiles_dir=_resolve(scfg.get("profiles_dir") or "profiles"),
+        profiles_dir=profiles_dir,
         session_dir=SESSION_DIR,
         session_files=session_files,
         headless=headless,
     )
 
+    curator_kind = os.environ.get("VS_STREAM_CURATOR") or scfg.get("curator", "heuristic")
     try:
-        curator = make_curator(scfg.get("curator", "heuristic"))
+        curator = make_curator(curator_kind)
     except Exception as e:  # noqa: BLE001
-        print(f"[stream] curator {scfg.get('curator')!r} unavailable ({e}); using heuristic")
+        print(f"[stream] curator {curator_kind!r} unavailable ({e}); using heuristic")
         curator = make_curator("heuristic")
 
-    workspace = get_workspace_dir()
+    print(f"[stream] browser profiles: {profiles_dir}")
     ctx = None
     if workspace is not None:
         try:
@@ -143,6 +178,8 @@ def build_hub_from_config():
         low_watermark=int(scfg.get("low_watermark", 8)),
         high_watermark=int(scfg.get("high_watermark", 20)),
         batch_window=float(scfg.get("batch_window", 1.5)),
+        host_mode=mode,
+        login_hint=login_hint if mode == "laptop" else "",
         producer=base,
         producer_overrides=overrides,
     )
